@@ -1,5 +1,4 @@
 let fs = require("fs");
-const { parse } = require("path");
 
 const input = fs.readFileSync("day3.txt", { encoding: "utf8" });
 const lines = input.split("\r\n");
@@ -25,10 +24,10 @@ function hasAdjecentSymbol(position, numberData) {
   x = parseInt(x);
   y = parseInt(y);
   let adjecentPositions = [];
-  for (i = x - 1; i < x + numberData.length + 1; i++) {
-    adjecentPositions.push(`${i},${y - 1}`);
-    adjecentPositions.push(`${i},${y}`);
-    adjecentPositions.push(`${i},${y + 1}`);
+  for (let i = x - 1; i < x + numberData.length + 1; i++) {
+    for (let j = y - 1; j <= y + 1; j++) {
+      adjecentPositions.push(`${i},${j}`);
+    }
   }
   return adjecentPositions.some((pos) => symbolPositions.has(pos));
 }
@@ -66,8 +65,8 @@ function isGear(position) {
   let [x, y] = position.split(",");
   x = parseInt(x);
   y = parseInt(y);
-  for (i = x - 1; i <= x + 1; i++) {
-    for (j = y - 1; j <= y + 1; j++) {
+  for (let i = x - 1; i <= x + 1; i++) {
+    for (let j = y - 1; j <= y + 1; j++) {
       if (goldNumberPositions.has(`${i},${j}`)) {
         let numberData = goldNumberPositions.get(`${i},${j}`);
         adjecentPartNumbers.set(numberData.id, numberData.number);

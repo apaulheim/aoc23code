@@ -1,5 +1,4 @@
 let fs = require("fs");
-const { parse } = require("path");
 
 const input = fs.readFileSync("day2.txt", { encoding: "utf8" });
 const lines = input.split("\r\n");
