@@ -43,6 +43,7 @@ const silver = Math.min(...seeds.map((seed) => getLocation(seed, maps)));
 console.log("silver", silver);
 
 // PART 2
+console.time("gold");
 let gold = Number.MAX_VALUE;
 for (let i = 0; i < seeds.length; i += 2) {
   for (let j = 0; j < seeds[i + 1]; j++) {
@@ -53,3 +54,4 @@ for (let i = 0; i < seeds.length; i += 2) {
   }
 }
 console.log("gold", gold);
+console.timeEnd("gold");
