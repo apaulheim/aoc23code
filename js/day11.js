@@ -2,27 +2,7 @@ const exp = require("constants");
 let fs = require("fs");
 
 const input = fs.readFileSync("day11.txt", { encoding: "utf8" });
-const dataStrs = input.split("\r\n");
-
-function expandSpace(data) {
-  // expand rows
-  for (let y = 0; y < data.length; y++) {
-    if (data[y].every((col) => col == ".")) {
-      data.splice(y, 0, data[y]);
-      y++;
-    }
-  }
-
-  // expand columns
-  for (let x = 0; x < data[0].length; x++) {
-    if (data.every((row) => row[x] == ".")) {
-      for (let y = 0; y < data.length; y++) {
-        data[y].splice(x, 0, ".");
-      }
-      x++;
-    }
-  }
-}
+const dataStrs = input.split("\n");
 
 function getGalaxies(data) {
   let galaxies = [];
@@ -49,31 +29,7 @@ function pairGalaxies(galaxies) {
   return pairs;
 }
 
-function shortestPath(pair) {
-  let x1 = pair[0].x;
-  let y1 = pair[0].y;
-  let x2 = pair[1].x;
-  let y2 = pair[1].y;
-  let dx = x2 - x1;
-  let dy = y2 - y1;
-  return Math.abs(dx) + Math.abs(dy);
-}
-
-function part1() {
-  const data = [];
-  dataStrs.forEach((row) => {
-    data.push(row.split(""));
-  });
-  expandSpace(data);
-  let galaxies = getGalaxies(data);
-  let pairs = pairGalaxies(galaxies);
-  let silver = pairs.reduce((acc, pair) => acc + shortestPath(pair), 0);
-  console.log("silver", silver);
-}
-
-part1();
-
-function expandSpace2(data) {
+function expandSpace(data) {
   const expandedRows = new Set();
   const expandedColumns = new Set();
   // expand rows
@@ -94,7 +50,7 @@ function expandSpace2(data) {
 function numberOfExpandedRows(v1, v2, expandedRows) {
   const [y1, y2] = [v1, v2].sort();
   let count = 0;
-  for (let y = y1; y <= y2; y++) {
+  for (let y = y1 + 1; y < y2; y++) {
     if (expandedRows.has(y)) {
       count++;
     }
@@ -105,7 +61,7 @@ function numberOfExpandedRows(v1, v2, expandedRows) {
 function numberOfExpandedColumns(v1, v2, expandedColumns) {
   const [x1, x2] = [v1, v2].sort();
   let count = 0;
-  for (let x = x1; x <= x2; x++) {
+  for (let x = x1 + 1; x < x2; x++) {
     if (expandedColumns.has(x)) {
       count++;
     }
@@ -113,7 +69,7 @@ function numberOfExpandedColumns(v1, v2, expandedColumns) {
   return count;
 }
 
-function shortestPath2(pair, expandedRows, expandedColumns) {
+function shortestPath(pair, expandedRows, expandedColumns, expandBy) {
   let x1 = pair[0].x;
   let y1 = pair[0].y;
   let x2 = pair[1].x;
@@ -127,28 +83,31 @@ function shortestPath2(pair, expandedRows, expandedColumns) {
     expandedColumns
   );
   return (
-    Math.abs(dx) -
-    expandedColumnsInRange +
-    Math.abs(dy) -
+    Math.abs(dx) +
+    Math.abs(dy) +
+    expandedRowsInRange * expandBy -
     expandedRowsInRange +
-    expandedRowsInRange * 1000000 +
-    expandedColumnsInRange * 1000000
+    expandedColumnsInRange * expandBy -
+    expandedColumnsInRange
   );
 }
 
-function part2() {
-  const data = [];
-  dataStrs.forEach((row) => {
-    data.push(row.split(""));
-  });
-  const [expandedRows, expandedColumns] = expandSpace2(data);
+function resolve() {
+  const data = dataStrs.map((row) => row.split(""));
+  const [expandedRows, expandedColumns] = expandSpace(data);
   let galaxies = getGalaxies(data);
   let pairs = pairGalaxies(galaxies);
+  let silver = pairs.reduce(
+    (acc, pair) => acc + shortestPath(pair, expandedRows, expandedColumns, 2),
+    0
+  );
+  console.log("silver", silver); // 9.8Mio instead of 10Mio right answer: 10231178
   let gold = pairs.reduce(
-    (acc, pair) => acc + shortestPath2(pair, expandedRows, expandedColumns),
+    (acc, pair) =>
+      acc + shortestPath(pair, expandedRows, expandedColumns, 1000000),
     0
   );
   console.log("gold", gold); // 269830339245 too low
 }
 
-part2();
+resolve();
