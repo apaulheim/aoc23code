@@ -48,7 +48,7 @@ function expandSpace(data) {
 }
 
 function numberOfExpandedRows(v1, v2, expandedRows) {
-  const [y1, y2] = [v1, v2].sort();
+  const [y1, y2] = [v1, v2].sort((a, b) => a - b);
   let count = 0;
   for (let y = y1 + 1; y < y2; y++) {
     if (expandedRows.has(y)) {
@@ -59,7 +59,7 @@ function numberOfExpandedRows(v1, v2, expandedRows) {
 }
 
 function numberOfExpandedColumns(v1, v2, expandedColumns) {
-  const [x1, x2] = [v1, v2].sort();
+  const [x1, x2] = [v1, v2].sort((a, b) => a - b);
   let count = 0;
   for (let x = x1 + 1; x < x2; x++) {
     if (expandedColumns.has(x)) {
@@ -101,13 +101,13 @@ function resolve() {
     (acc, pair) => acc + shortestPath(pair, expandedRows, expandedColumns, 2),
     0
   );
-  console.log("silver", silver); // 9.8Mio instead of 10Mio right answer: 10231178
+  console.log("silver", silver);
   let gold = pairs.reduce(
     (acc, pair) =>
       acc + shortestPath(pair, expandedRows, expandedColumns, 1000000),
     0
   );
-  console.log("gold", gold); // 269830339245 too low
+  console.log("gold", gold);
 }
 
 resolve();
